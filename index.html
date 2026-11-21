@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>POD原稿エディタ</title>
+<link rel="stylesheet" href="css/editor.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
+<body>
+<header id="topbar">
+  <button class="brand" id="brandHome" title="マイページ（過去の作業一覧）へ">POD原稿エディタ</button>
+  <div class="tb-group">
+    <button id="btnOpenDocx" title="マイページ（過去の作業一覧・新しい原稿の読込）へ">マイページ</button>
+    <button id="btnOpenPdf" title="赤入れ（PDF／画像）を読み込む">赤入れを追加</button>
+    <button id="btnRules" class="accent" title="POD組版ルールで自動整形">自動整形</button>
+  </div>
+  <div class="tb-group">
+    <button id="btnUndo" title="元に戻す (⌘Z)">↶</button>
+    <button id="btnRedo" title="やり直し (⇧⌘Z)">↷</button>
+    <select id="selType" title="段落の種類 (Alt+0〜6)"></select>
+    <button id="btnAlignL" title="左揃え">左</button>
+    <button id="btnAlignC" title="中央揃え">中</button>
+    <button id="btnAlignR" title="右揃え">右</button>
+    <button id="btnToTable" title="選択した段落を2列の表に変換（項目名と内容を揃える）">表に変換</button>
+  </div>
+  <div class="tb-group right">
+    <button id="btnSettings" title="書誌・組版設定">設定</button>
+    <button id="btnSaveProj" title="作業内容を .json で保存">保存</button>
+    <button id="btnLoadProj" title=".json の作業内容を開く">開く</button>
+    <button id="btnPrint" title="A5で印刷／PDF保存">印刷</button>
+    <button id="btnExportTxt" title="整形後の本文をテキストで書き出す">TXT書き出し</button>
+    <button id="btnExport" class="primary" title="POD用 .docx を書き出す">DOCX書き出し</button>
+  </div>
+  <input type="file" id="fileDocx" accept=".docx,.txt,.text,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
+  <input type="file" id="filePdf" accept="application/pdf,image/png,image/jpeg" multiple hidden>
+  <input type="file" id="fileProj" accept=".json,application/json" hidden>
+  <input type="file" id="fileImg" accept="image/*" hidden>
+</header>
+
+<div id="main">
+  <nav id="outline">
+    <div class="pane-title">構成</div>
+    <div id="outlineList"></div>
+  </nav>
+
+  <section id="paper-wrap">
+    <div id="empty" class="uploader">
+      <h1>マイページ</h1>
+      <p class="lead">このブラウザに保存された、あなたの作業の一覧です。クリックすると続きから編集できます。</p>
+      <section class="mypage">
+        <div class="my-head"><h2>過去の作業</h2><span id="myCount" class="muted small"></span></div>
+        <div id="myProjects"></div>
+        <p class="muted small">作業は他の利用者には表示されません。別のPC・ブラウザで続けるときは、作業を開いて「保存」で .json に書き出し、移行先で「開く」から読み込んでください。</p>
+      </section>
+      <h2 class="new-head">新しい原稿をアップロード</h2>
+      <p class="lead">電子用原稿と赤入れを読み込むと、POD用の組版に自動整形して編集を始められます。</p>
+      <div class="drops">
+        <label class="drop" id="dropManu" for="fileDocx">
+          <span class="step">1　原稿（必須）</span>
+          <strong>Word（.docx）またはテキスト（.txt）</strong>
+          <span class="hint">ここにドロップ、またはクリックして選択</span>
+          <span class="picked" id="pickedManu"></span>
+        </label>
+        <label class="drop" id="dropRed" for="filePdf">
+          <span class="step">2　赤入れ（任意）</span>
+          <strong>PDF またはスキャン画像（.jpg / .png）</strong>
+          <span class="hint">複数ファイル可。あとからでも追加できます</span>
+          <span class="picked" id="pickedRed"></span>
+        </label>
+      </div>
+      <div class="start-row">
+        <button id="btnStart" class="primary big" disabled>編集を始める</button>
+        <label class="ghost" for="fileProj">保存した作業データ（.json）を開く</label>
+      </div>
+      <ul class="notes">
+        <li>Wordの変更履歴はすべて承諾した状態で取り込みます。画像も保持します。</li>
+        <li>テキストは1行を1段落として読み込みます（UTF-8／Shift_JIS）。「第1章　…」「1－1　…」「◇…」などの見出しは自動で判別します。</li>
+        <li>ファイルはこのブラウザの中だけで処理し、外部には送信しません。</li>
+      </ul>
+    </div>
+    <div id="paper" hidden></div>
+  </section>
+
+  <aside id="side">
+    <div class="tabs">
+      <button data-tab="pdf" class="on">赤入れ</button>
+      <button data-tab="check">チェック</button>
+      <button data-tab="changes">変更</button>
+      <button data-tab="find">置換</button>
+    </div>
+    <div class="tabpane on" id="tab-pdf">
+      <div class="pdf-tools">
+        <span id="pdfName" class="muted">赤入れ未読込</span>
+        <span class="sp"></span>
+        <button id="pdfZoomOut">－</button><button id="pdfZoomIn">＋</button>
+      </div>
+      <div id="pdfPages"></div>
+    </div>
+    <div class="tabpane" id="tab-check">
+      <div class="check-add">
+        <input id="chkPage" type="number" min="1" placeholder="頁" title="赤入れPDFの頁">
+        <input id="chkNote" type="text" placeholder="赤入れ内容（例：2-1 見出しに「誤った戦略」では を追加）">
+        <button id="chkAdd" title="現在の段落に紐付けて追加">追加</button>
+      </div>
+      <div class="muted small">カーソルのある段落に紐付きます。クリックで該当段落へ移動。</div>
+      <div id="chkList"></div>
+    </div>
+    <div class="tabpane" id="tab-changes">
+      <div class="pdf-tools"><span class="muted small">読込時の原稿からの変更点</span><span class="sp"></span><button id="chgRefresh">更新</button></div>
+      <div id="chgList"></div>
+    </div>
+    <div class="tabpane" id="tab-find">
+      <label>検索<input id="fFind" type="text"></label>
+      <label>置換<input id="fRepl" type="text"></label>
+      <div class="row">
+        <label class="inline"><input id="fRegex" type="checkbox"> 正規表現</label>
+        <span class="sp"></span>
+        <button id="fNext">次を検索</button>
+        <button id="fAll">すべて置換</button>
+      </div>
+      <div id="fResult" class="muted small"></div>
+      <div class="small muted presets">よく使う置換：
+        <button data-f="　　" data-r="　">全角空白の重複</button>
+        <button data-f="――" data-r="……">―― → ……</button>
+        <button data-f="([^\s　])\s+([（「])" data-r="$1$2" data-re="1">括弧前の空白</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer id="status"><span id="stLeft"></span><span class="sp"></span><span id="stSave"></span></footer>
+
+<div id="menu" class="menu" hidden></div>
+
+<dialog id="dlgRules">
+  <form method="dialog">
+    <h2>自動整形（POD組版ルール）</h2>
+    <p class="muted small">チェックしたルールを順に適用します。数字は変更される段落数の見込みです。適用後も「元に戻す」で戻せます。</p>
+    <div id="rulesList"></div>
+    <div class="dlg-btns"><button value="cancel">キャンセル</button><button id="rulesApply" value="ok" class="primary">適用</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgSettings">
+  <form method="dialog">
+    <h2>書誌・組版設定</h2>
+    <label>書名<input id="setTitle" type="text"></label>
+    <label>著者<input id="setAuthor" type="text"></label>
+    <label class="inline"><input id="setOpener" type="checkbox"> 章扉を独立したページにする（番号付きの章）</label>
+    <label class="inline"><input id="setHeader" type="checkbox"> 柱（ヘッダーに章タイトル）を入れる</label>
+    <label class="inline"><input id="setFolio" type="checkbox"> ノンブル（ページ番号）を入れる</label>
+    <label>判型
+      <select id="setSize"><option value="A5">A5（148×210mm）</option><option value="B6">B6（128×182mm）</option><option value="SHIROKU">四六判（127×188mm）</option></select>
+    </label>
+    <div class="dlg-btns"><button value="cancel">閉じる</button><button id="setSave" value="ok" class="primary">保存</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlgConfirm">
+  <form method="dialog">
+    <h2 id="cfTitle">確認</h2>
+    <p id="cfMsg"></p>
+    <div class="dlg-btns"><button value="no">キャンセル</button><button value="yes" class="primary" id="cfOk">続ける</button></div>
+  </form>
+</dialog>
+
+<div id="lightbox" hidden><canvas id="lbCanvas"></canvas></div>
+<div id="toast" hidden></div>
+
+<script src="js/util.js"></script>
+<script src="js/docx-import.js"></script>
+<script src="js/rules.js"></script>
+<script src="js/docx-export.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

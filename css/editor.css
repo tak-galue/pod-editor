@@ -1,0 +1,201 @@
+:root{
+  --bg:#eceae6; --panel:#ffffff; --ink:#1a1a1a; --muted:#6b6b6b; --line:#d9d5cf;
+  --brand:#7A1F2E; --brand-soft:#F4E3E5; --brand-ink:#ffffff; --accent:#2f5d8a;
+  --sel:#fff3c4; --focus:#fdf7e3; --paper:#ffffff; --chg:#e8f2e4; --red:#c62828;
+  --hover:#f6f4f1; --soft:#faf9f7; --paper-ink:#1a1a1a; --brand-text:#7A1F2E;
+  --mincho:"游明朝","Yu Mincho","YuMincho","Hiragino Mincho ProN",serif;
+  --gothic:"游ゴシック","Yu Gothic","YuGothic","Hiragino Sans",sans-serif;
+}
+
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1b1918;--panel:#262322;--ink:#ece8e4;--muted:#a59f99;--line:#3d3835;--brand-soft:#3a2328;--sel:#4a4220;--focus:#fdf7e3;--hover:#312d2b;--soft:#2c2826;--brand-text:#e4919e;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1918;--panel:#262322;--ink:#ece8e4;--muted:#a59f99;--line:#3d3835;--brand-soft:#3a2328;--sel:#4a4220;--focus:#fdf7e3;--hover:#312d2b;--soft:#2c2826;--brand-text:#e4919e;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--gothic);font-size:13px;display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:5px 10px;cursor:pointer;color:var(--ink)}
+button:hover{background:var(--hover)}
+button.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+button.primary:hover{filter:brightness(1.1)}
+button.accent{border-color:var(--brand-text);color:var(--brand-text);font-weight:600}
+input[type=text],input[type=number],select{font:inherit;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--panel);color:var(--ink)}
+.muted{color:var(--muted)} .small{font-size:11.5px} .sp{flex:1}
+[hidden]{display:none!important}
+
+#topbar{display:flex;align-items:center;gap:14px;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+.brand{font-weight:700;color:var(--brand-text);letter-spacing:.05em}
+button.brand{border:0;background:none;padding:5px 2px}
+button.brand:hover{background:none;text-decoration:underline}
+.tb-group{display:flex;gap:6px;align-items:center}
+.tb-group.right{margin-left:auto}
+#main{flex:1;display:grid;grid-template-columns:230px 1fr 380px;min-height:0}
+#outline,#side{background:var(--panel);overflow:auto;border-right:1px solid var(--line)}
+#side{border-right:0;border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.pane-title{font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+#outlineList a{display:block;padding:4px 12px;color:var(--ink);text-decoration:none;font-size:12px;line-height:1.4;border-left:3px solid transparent}
+#outlineList a:hover{background:var(--hover)}
+#outlineList a.ch{font-weight:700;margin-top:6px}
+#outlineList a.h2{padding-left:22px;color:#444}
+#outlineList a.on{border-left-color:var(--brand);background:var(--brand-soft)}
+
+#paper-wrap{overflow:auto;padding:24px 0 80px}
+#empty{max-width:760px;margin:40px auto;padding-inline:16px}
+.uploader h1{color:var(--brand-text);font-size:24px;margin:0 0 6px}
+.uploader .lead{color:var(--muted);margin:0 0 20px;line-height:1.7}
+.drops{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.drop{display:flex;flex-direction:column;gap:6px;padding:26px 22px;min-height:170px;border:2px dashed var(--line);border-radius:12px;background:var(--panel);cursor:pointer;transition:border-color .15s,background .15s}
+.drop:hover,.drop:focus-within{border-color:var(--brand)}
+.drop.drag{border-color:var(--brand);background:var(--brand-soft)}
+.drop.done{border-style:solid;border-color:var(--brand)}
+.drop .step{font-size:11px;letter-spacing:.06em;color:var(--brand-text);font-weight:700}
+.drop strong{font-size:15px}
+.drop .hint{color:var(--muted);font-size:12px}
+.drop .picked{margin-top:auto;font-size:12.5px;font-weight:600;word-break:break-all}
+.drop .picked:not(:empty)::before{content:"✓ ";color:var(--brand)}
+.start-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:20px 0 10px}
+button.big{padding:10px 26px;font-size:15px;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}
+.ghost{color:var(--accent);cursor:pointer;font-size:12.5px;text-decoration:underline}
+.notes{color:var(--muted);font-size:12px;line-height:1.8;padding-left:18px}
+/* マイページ：過去の作業一覧 */
+.mypage{margin:0 0 32px}
+.my-head{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.uploader h2{font-size:16px;margin:0}
+.uploader h2.new-head{margin:0 0 6px;padding-top:24px;border-top:1px solid var(--line)}
+#myProjects{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.my-item{display:flex;align-items:stretch;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.my-item.current{border-color:var(--brand)}
+.my-item:hover{border-color:var(--brand)}
+.my-open{flex:1;display:flex;flex-direction:column;gap:3px;text-align:left;border:0;border-radius:0;padding:12px 16px;background:none;min-width:0}
+.my-open:hover{background:var(--hover)}
+.my-title{font-size:14.5px;font-weight:700;color:var(--brand-text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.my-sub{font-size:12px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.my-sub:empty{display:none}
+.my-meta{font-size:11.5px;color:var(--muted)}
+.my-del{border:0;border-left:1px solid var(--line);border-radius:0;padding:0 16px;color:var(--muted);background:none}
+.my-del:hover{color:var(--red);background:var(--hover)}
+.my-empty{padding:18px 16px;border:1px dashed var(--line);border-radius:10px;color:var(--muted);font-size:12.5px;background:var(--panel)}
+#pdfPages img{width:100%;display:block;margin-bottom:10px;border:1px solid var(--line);cursor:zoom-in}
+
+/* 紙面：A5の版面幅（約113mm）を基準に表示 */
+#paper{color:var(--paper-ink);width:calc(113mm + 120px);margin:0 auto;background:var(--paper);box-shadow:0 1px 4px rgba(0,0,0,.12);padding:40px 30px 60px 90px;position:relative}
+.blk{position:relative;border-radius:3px;outline:none}
+.blk>.gut{position:absolute;left:-84px;top:0;width:76px;text-align:right;user-select:none}
+.blk .tag{font-size:10px;padding:1px 6px;border-radius:9px;border:1px solid var(--line);background:#faf9f7;color:var(--muted);line-height:1.5}
+.blk .flags{display:block;font-size:10px;color:var(--red);margin-top:2px}
+.blk.sel{background:var(--sel)}
+.blk.cur{box-shadow:-3px 0 0 var(--accent)}
+.blk.changed>.gut .tag{border-color:#6aa25c;color:#3d7a30}
+.ed{outline:none;white-space:pre-wrap;word-break:break-all;min-height:1em}
+.ed:focus{background:var(--focus)}
+.ed:empty::before{content:attr(data-ph);color:#bbb}
+
+.t-body .ed{font-family:var(--mincho);font-size:10.5pt;line-height:1.75;text-indent:1em;margin:0 0 .55em}
+.blk[data-align=center] .ed{text-align:center;text-indent:0}
+.blk[data-align=right] .ed{text-align:right;text-indent:0}
+.t-chapter{margin:48px 0 6px;padding-top:28px;border-top:1px dashed #c9c4bd}
+.t-chapter .chlabel{display:inline-block;background:var(--brand);color:#fff;font-weight:700;font-size:13pt;padding:3px 18px;margin-bottom:10px;min-width:5em;text-align:center}
+.t-chapter .chlabel:empty{display:none}
+.t-chapter .ed.title{font-size:22pt;font-weight:700;line-height:1.3;margin:4px 0 6px}
+.t-chapter .rh{font-size:10.5px;color:var(--muted);margin-top:6px;display:flex;gap:6px}
+.t-chapter .rh .ed{flex:1;border-bottom:1px dotted var(--line)}
+.t-chapterSub .ed{color:#4d4d4d;font-size:11pt;margin:2px 0;padding-bottom:2px}
+.t-chapterSub + :not(.t-chapterSub){margin-top:22px}
+.t-chapterSub:has(+ :not(.t-chapterSub)){border-bottom:4px solid var(--brand);padding-bottom:14px}
+.t-h2 .ed{background:var(--brand);color:#fff;font-weight:700;font-size:14pt;line-height:1.5;padding:4px 10px;margin:30px 0 14px}
+.t-lead .ed{color:var(--brand);font-size:10.5pt;margin:-6px 0 12px}
+.t-h3 .ed{color:var(--brand);font-weight:700;font-size:12pt;margin:18px 0 4px}
+.t-callout .ed{border-left:6px solid var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:11pt;padding:6px 10px;margin:8px 0}
+.t-pagebreak .pb{border-top:2px dashed #b9b2a8;margin:18px 0;text-align:center;font-size:10px;color:var(--muted);line-height:0}
+.t-pagebreak .pb span{background:#fff;padding:0 8px}
+.t-toc .toc{border:1px solid var(--line);padding:12px 16px;margin:12px 0;background:#fcfbf9}
+.t-toc .toc h3{margin:0 0 8px;text-align:center}
+.t-toc .toc div{font-size:11px;line-height:1.7;display:flex}
+.t-toc .toc div.l1{font-weight:700}
+.t-toc .toc div.l2{padding-left:1.5em}
+.t-figure figure{margin:16px 0;text-align:center}
+.t-figure .cap{font-weight:700;color:var(--brand);font-size:10pt;margin-bottom:6px}
+.t-figure img{max-width:100%;display:inline-block;border:1px solid #eee}
+.t-figure .note{font-size:9pt;color:#555;margin-top:4px}
+.t-figure .figtools{font-size:11px;color:var(--muted);display:flex;gap:8px;justify-content:center;align-items:center;margin-top:4px}
+.t-table table{border-collapse:collapse;width:100%;margin:10px 0;font-size:9.5pt}
+.t-table td{border:1px solid #cfcac3;padding:4px 8px;vertical-align:top}
+.t-table td:first-child{background:#f2f2f2;font-weight:700;color:#4d4d4d;white-space:nowrap;width:1%}
+.hit{background:#ffe066!important}
+
+/* side */
+.tabs{display:flex;border-bottom:1px solid var(--line)}
+.tabs button{flex:1;border:0;border-radius:0;padding:9px 0;background:var(--soft);border-bottom:2px solid transparent}
+.tabs button.on{background:var(--panel);border-bottom-color:var(--brand-text);font-weight:700;color:var(--brand-text)}
+.tabpane{display:none;flex:1;overflow:auto;padding:10px}
+.tabpane.on{display:block}
+.pdf-tools{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+#pdfPages canvas{width:100%;display:block;margin-bottom:10px;border:1px solid var(--line);cursor:zoom-in}
+#pdfPages .pg{font-size:11px;color:var(--muted);margin:2px 0}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;overflow:auto;cursor:zoom-out;display:flex;justify-content:center;align-items:flex-start;padding:20px}
+#lightbox canvas{max-width:none;background:#fff}
+.check-add{display:flex;gap:4px;margin-bottom:4px}
+.check-add #chkPage{width:52px}
+.check-add #chkNote{flex:1;min-width:0}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:8px 4px;border-bottom:1px solid #eee;cursor:pointer}
+.chk:hover{background:var(--hover)}
+.chk.done .txt{color:var(--muted);text-decoration:line-through}
+.chk .pg{font-size:10px;background:var(--brand-soft);color:var(--brand);border-radius:8px;padding:0 6px;white-space:nowrap}
+.chk .ctx{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.chk .del{margin-left:auto;border:0;background:none;color:#aaa;padding:0 4px}
+.chg{border-bottom:1px solid #eee;padding:8px 2px;cursor:pointer;font-size:12px;line-height:1.6}
+.chg:hover{background:var(--hover)}
+.chg .k{font-size:10px;color:var(--muted)}
+.chg del{background:#fde2e2;color:#a11}
+.chg ins{background:#dff3d8;color:#1b6b12;text-decoration:none}
+#tab-find label{display:block;margin-bottom:8px}
+#tab-find label input[type=text]{display:block;width:100%;margin-top:3px}
+#tab-find .row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+label.inline{display:flex;gap:6px;align-items:center}
+.presets button{font-size:11px;padding:2px 6px;margin:3px 2px}
+
+#status{display:flex;padding:4px 12px;background:var(--panel);border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)}
+
+.menu{position:fixed;z-index:40;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.15);padding:6px;min-width:190px;font-size:12.5px}
+.menu .sec{font-size:10px;color:var(--muted);padding:6px 8px 2px}
+.menu button{display:block;width:100%;text-align:left;border:0;padding:5px 8px;border-radius:5px}
+.menu button:hover{background:var(--brand-soft)}
+.menu button.cur{font-weight:700;color:var(--brand)}
+.menu kbd{float:right;color:var(--muted);font-size:10px}
+
+dialog{background:var(--panel);color:var(--ink);border:0;border-radius:12px;padding:22px 26px;width:min(560px,92vw);box-shadow:0 10px 40px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+dialog h2{margin:0 0 6px;font-size:17px;color:var(--brand)}
+dialog label{display:block;margin:10px 0}
+dialog label input[type=text],dialog label select{display:block;width:100%;margin-top:4px}
+.rule{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f0eeea}
+.rule .rd{font-size:11.5px;color:var(--muted)}
+.rule .cnt{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--brand);font-weight:700;white-space:nowrap}
+.dlg-btns{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+#toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 18px;border-radius:20px;z-index:60;font-size:12.5px}
+
+@media (max-width:1100px){#main{grid-template-columns:1fr 330px}#outline{display:none}}
+@media (max-width:760px){#main{grid-template-columns:1fr}#side{display:none}#paper{color:var(--paper-ink);width:auto;margin:0 8px;padding:24px 12px 40px 70px}}
+
+@media print{
+  @page{size:A5;margin:20mm 15mm 18mm 20mm}
+  body{display:block;overflow:visible;background:#fff}
+  #topbar,#outline,#side,#status,.gut,.rh,.figtools,#empty{display:none!important}
+  #paper{color:#1a1a1a}
+  #main{display:block}
+  #paper-wrap{overflow:visible;padding:0}
+  #paper{box-shadow:none;padding:0;width:auto}
+  .ed:focus{background:none}
+  .blk.sel,.blk.cur{background:none;box-shadow:none}
+  .t-chapter{break-before:page;border-top:0;padding-top:30mm}
+  .t-pagebreak{break-after:page}.t-pagebreak .pb{display:none}
+  .t-h2,.t-h3,.t-figure{break-inside:avoid}
+  .t-h2,.t-h3{break-after:avoid}
+}
+
+/* アップロード画面では編集用パネルとツールを隠す */
+body.uploading #outline,body.uploading #side,body.uploading #topbar .tb-group:not(:first-of-type){display:none}
+body.uploading #topbar .tb-group:first-of-type{display:none}
+body.uploading #main{grid-template-columns:1fr}
+/* 読み込み中は作業の切替・削除を受け付けない */
+body.busy #myProjects,body.busy #brandHome,body.busy #btnOpenDocx,body.busy #btnStart{pointer-events:none;opacity:.55}
+body.busy{cursor:progress}
